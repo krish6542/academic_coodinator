@@ -1,0 +1,11 @@
+<h1>Programs</h1>
+
+<a href="/admin/programs/program/add/">Add New Program</a>
+
+<ul>
+  {% for program in programs %}
+    <li>
+      {{ program.title }} - {{ program.program_type }}
+    </li>
+  {% endfor %}
+</ul>
