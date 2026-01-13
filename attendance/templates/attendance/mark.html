@@ -130,7 +130,7 @@
             <img class="h-full w-full object-cover" src="https://via.placeholder.com/48" alt="{{ app.student_name }}"/>
         </div>
         <div class="flex-1 min-w-0">
-        <p class="font-bold text-sm truncate">{{ app.student_name }}</p>
+        <p class="font-bold text-sm truncate"><a href="{% url 'attendance:student_attendance' app.id %}" class="text-primary">{{ app.student_name }}</a></p>
         <p class="text-xs text-slate-500">ID: {{ app.id }}</p>
         </div>
         </div>

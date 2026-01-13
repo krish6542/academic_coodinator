@@ -73,3 +73,57 @@ def mark_attendance(request):
 		'applications': apps_qs,
 		'mark_date': mark_date,
 	})
+
+
+def student_attendance(request, app_id):
+	"""View and edit a single student's attendance records.
+
+	- GET: show attendance list for that student (by Application)
+	- POST: update an existing attendance or add a new record for a date
+	"""
+	try:
+		app = Application.objects.get(id=app_id)
+	except Application.DoesNotExist:
+		return redirect('attendance:mark_attendance')
+
+	# try to resolve a User by email
+	student_user = User.objects.filter(email__iexact=app.email).first()
+
+	if student_user:
+		records = Attendance.objects.filter(student=student_user).order_by('-date')
+	else:
+		# fallback: show any attendance entries for the same program with no linked user
+		records = Attendance.objects.filter(program=app.program, student__isnull=True).order_by('-date')
+
+	if request.method == 'POST':
+		# update existing record
+		if 'attendance_id' in request.POST and 'status' in request.POST:
+			aid = request.POST.get('attendance_id')
+			status = request.POST.get('status')
+			try:
+				rec = Attendance.objects.get(id=int(aid))
+				rec.status = status
+				rec.save()
+				messages.success(request, 'Attendance updated.')
+			except Attendance.DoesNotExist:
+				messages.error(request, 'Record not found.')
+			return redirect('attendance:student_attendance', app_id=app_id)
+
+		# add new record for date
+		new_date = request.POST.get('new_date')
+		new_status = request.POST.get('new_status')
+		if new_date and new_status:
+			student = student_user if student_user else None
+			Attendance.objects.update_or_create(
+				student=student,
+				program=app.program,
+				date=new_date,
+				defaults={'status': new_status},
+			)
+			messages.success(request, 'New attendance record saved.')
+			return redirect('attendance:student_attendance', app_id=app_id)
+
+	return render(request, 'attendance/student_detail.html', {
+		'application': app,
+		'records': records,
+	})
