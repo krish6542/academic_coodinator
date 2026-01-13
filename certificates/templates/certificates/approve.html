@@ -56,10 +56,14 @@
 <body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-100 min-h-screen flex flex-col">
 <!-- Top Navigation Bar -->
 <header class="sticky top-0 z-50 bg-background-light dark:bg-background-dark/95 backdrop-blur-md">
+{% url 'dashboard' as dashboard_url %}
 <div class="flex items-center p-4 pb-2 justify-between">
-<div class="text-[#0d141b] dark:text-slate-100 flex size-12 shrink-0 items-center">
-<span class="material-symbols-outlined">arrow_back_ios</span>
-</div>
+  <div class="flex items-center gap-2">
+    <button aria-label="Go back" class="flex items-center gap-2 bg-transparent text-[#0d141b] dark:text-slate-100 px-2 py-2 rounded" onclick="(function(){try{var r=document.referrer; if(r && new URL(r).origin===location.origin){history.back();}else{location.href='{{ dashboard_url }}';}}catch(e){location.href='{{ dashboard_url }}';}})();return false;">
+      <span class="material-symbols-outlined">arrow_back</span>
+      <span class="sr-only">Back</span>
+    </button>
+  </div>
 <h2 class="text-[#0d141b] dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center font-display">Approve Certificate</h2>
 <div class="flex w-12 items-center justify-end">
 <button class="flex cursor-pointer items-center justify-center rounded-lg h-12 bg-transparent text-[#0d141b] dark:text-slate-100 p-0">
